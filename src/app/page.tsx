@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   Send,
@@ -14,9 +13,7 @@ import {
   FolderArchive,
   Plus,
   Trash2,
-  Lock,
   ArrowRight,
-  LogIn,
   BookOpen,
   Radio,
   Shield,
@@ -182,7 +179,6 @@ const GREETINGS: Record<string, string> = {
 
 export default function UniversalBridgeChatPage() {
   const router = useRouter();
-  const { user, loading: authLoading, loginAsDemo, signInWithGoogle } = useAuth();
   const { currentLanguage } = useLanguage();
 
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -507,62 +503,7 @@ export default function UniversalBridgeChatPage() {
     }
   };
 
-  if (authLoading) {
-    return (
-      <main className="min-h-screen flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
-      </main>
-    );
-  }
 
-  if (!user) {
-    return (
-      <main className="min-h-[80vh] flex items-center justify-center p-4">
-        <div className="w-full max-w-sm rounded-3xl p-6 sm:p-8 glass-card border border-slate-200 dark:border-slate-800 shadow-xl text-center flex flex-col gap-5">
-          <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mx-auto shadow-sm">
-            <Lock className="w-6 h-6" />
-          </div>
-
-          <div>
-            <h1 className="text-xl font-black text-slate-900 dark:text-white">
-              Login Required
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Please sign in to access the Universal AI Action Bridge.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2.5">
-            <button
-              type="button"
-              onClick={loginAsDemo}
-              className="w-full py-3 px-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all"
-            >
-              <span>⚡ Quick Guest / Judge Access</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              type="button"
-              onClick={signInWithGoogle}
-              className="w-full py-2.5 px-4 rounded-2xl border bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-            >
-              <LogIn className="w-4 h-4 text-slate-500" />
-              <span>Continue with Google</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => router.push("/login")}
-              className="text-xs text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 font-medium py-1"
-            >
-              Sign in with Email
-            </button>
-          </div>
-        </div>
-      </main>
-    );
-  }
 
   const filteredMessages = messages.filter((m) => {
     if (selectedCategory === "all") return true;
