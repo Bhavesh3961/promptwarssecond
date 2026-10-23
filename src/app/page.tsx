@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
 import {
   Send,
@@ -654,9 +655,12 @@ export default function UniversalBridgeChatPage() {
                 >
                   {msg.imagePreview && (
                     <div className="rounded-xl overflow-hidden border border-white/20 max-w-xs">
-                      <img
+                      <Image
                         src={msg.imagePreview}
                         alt="Attached upload"
+                        width={320}
+                        height={160}
+                        unoptimized
                         className="w-full h-auto max-h-40 object-cover"
                       />
                     </div>
@@ -688,9 +692,12 @@ export default function UniversalBridgeChatPage() {
 
         {imagePreview && (
           <div className="px-3.5 py-2 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 text-xs">
-            <img
+            <Image
               src={imagePreview}
               alt="Attached thumbnail"
+              width={32}
+              height={32}
+              unoptimized
               className="w-8 h-8 rounded-lg object-cover border border-slate-300 dark:border-slate-700"
             />
             <span className="truncate flex-1 font-mono text-slate-700 dark:text-slate-300">

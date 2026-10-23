@@ -4,13 +4,10 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { useLanguage } from "@/context/LanguageContext";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./LanguageSelector";
 import {
-  LogOut,
-  User as UserIcon,
   PhoneCall,
   Menu,
   X,
@@ -65,8 +62,7 @@ const NAV_LOCALIZED: Record<string, Record<string, string>> = {
 
 export default function Navbar() {
   const pathname = usePathname();
-  const { user, logout } = useAuth();
-  const { t, currentLanguage, language } = useLanguage();
+  const { currentLanguage, language } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const activeLang = currentLanguage || language || "en";
@@ -100,7 +96,8 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="flex items-center gap-2.5 group focus-visible:outline-none"
+            aria-label="AapdaSetu home"
+            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl"
           >
             <div className="relative w-9 h-9 rounded-xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 bg-white flex items-center justify-center group-hover:scale-105 transition-transform">
               <Image
@@ -127,13 +124,14 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 ${
+                  aria-current={active ? "page" : undefined}
+                  className={`px-3 py-1.5 rounded-xl transition-all flex items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                     active
                       ? "text-slate-900 dark:text-white bg-slate-200/70 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 shadow-xs"
                       : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
                   }`}
                 >
-                  <IconComp className="w-3.5 h-3.5" />
+                  <IconComp className="w-3.5 h-3.5" aria-hidden="true" />
                   <span>{link.label}</span>
                 </Link>
               );
@@ -147,59 +145,32 @@ export default function Navbar() {
 
           <a
             href="tel:112"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
+            aria-label="Call national emergency number 112"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400"
           >
-            <PhoneCall className="w-3.5 h-3.5 animate-pulse" />
+            <PhoneCall className="w-3.5 h-3.5 animate-pulse" aria-hidden="true" />
             <span>112</span>
           </a>
 
-          {user ? (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-              <div className="flex items-center gap-2">
-                {user.photoURL ? (
-                  <img
-                    src={user.photoURL}
-                    alt={user.displayName || "User"}
-                    className="w-8 h-8 rounded-full ring-1 ring-slate-300 dark:ring-slate-700 object-cover"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-medium flex items-center justify-center text-xs">
-                    {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
-                  </div>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => logout()}
-                className="p-1.5 text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                title={t("signOut")}
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
-            >
-              <UserIcon className="w-3.5 h-3.5" />
-              <span>{t("signIn")}</span>
-            </Link>
-          )}
-
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl"
-            aria-label="Toggle navigation"
+            aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
           </button>
         </div>
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden px-4 pt-2 pb-4 glass-card border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2">
+        <nav
+          id="mobile-nav"
+          aria-label="Mobile Navigation"
+          className="md:hidden px-4 pt-2 pb-4 glass-card border-t border-slate-200 dark:border-slate-800 flex flex-col gap-2"
+        >
           {navLinks.map((link) => {
             const active = pathname === link.href;
             const IconComp = link.icon;
@@ -228,7 +199,7 @@ export default function Navbar() {
             <PhoneCall className="w-4 h-4" />
             <span>Emergency Dial 112</span>
           </a>
-        </div>
+        </nav>
       )}
     </header>
   );
