@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const startTime = Date.now();
   let dbStatus = "connected";
